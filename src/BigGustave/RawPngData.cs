@@ -39,6 +39,19 @@
             bitDepth = imageHeader.BitDepth;
         }
 
+        public byte[] GetRawImageBytes()
+        {
+            return data;
+        }
+
+        public int GetPixelIndex(int x, int y)
+        {
+            var rowStartPixel = (rowOffset + (rowOffset * y)) + (bytesPerPixel * width * y);
+            var pixelStartIndex = rowStartPixel + (bytesPerPixel * x);
+            
+            return pixelStartIndex;
+        }
+        
         public Pixel GetPixel(int x, int y)
         {
             if (palette != null)

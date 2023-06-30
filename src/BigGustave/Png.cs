@@ -51,6 +51,20 @@
         public Pixel GetPixel(int x, int y) => data.GetPixel(x, y);
 
         /// <summary>
+        /// Gets the raw image bytes used within the PNG image.
+        /// </summary>
+        /// <returns>The raw image bytes</returns>
+        public byte[] GetRawImageBytes() => data.GetRawImageBytes();
+
+        /// <summary>
+        /// Gets the index of a pixel at a raw (x, y).
+        /// </summary>
+        /// <param name="x">The x coordinate (column)</param>
+        /// <param name="y">The y coordinate (row).</param>
+        /// <returns></returns>
+        public int GetPixelIndex(int x, int y) => data.GetPixelIndex(x, y);
+
+        /// <summary>
         /// Read the PNG image from the stream.
         /// </summary>
         /// <param name="stream">The stream containing PNG data to be read.</param>
