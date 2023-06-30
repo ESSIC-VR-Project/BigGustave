@@ -10,6 +10,7 @@
         private readonly byte[] data;
         private readonly int bytesPerPixel;
         private readonly int width;
+        private readonly int height;
         private readonly Palette palette;
         private readonly ColorType colorType;
         private readonly int rowOffset;
@@ -34,22 +35,41 @@
             this.palette = palette;
             
             width = imageHeader.Width;
+            height = imageHeader.Height;
             colorType = imageHeader.ColorType;
             rowOffset = imageHeader.InterlaceMethod == InterlaceMethod.Adam7 ? 0 : 1;
             bitDepth = imageHeader.BitDepth;
         }
-
-        public byte[] GetRawImageBytes()
-        {
-            return data;
-        }
-
-        public int GetPixelIndex(int x, int y)
+        
+        private int GetPixelIndex(int x, int y)
         {
             var rowStartPixel = (rowOffset + (rowOffset * y)) + (bytesPerPixel * width * y);
             var pixelStartIndex = rowStartPixel + (bytesPerPixel * x);
             
             return pixelStartIndex;
+        }
+
+        /// <summary>
+        /// Transforms the data such that there is no spacing in between each pixel.
+        /// </summary>
+        /// <returns>The packed byte array</returns>
+        public byte[] GetPackedBytes()
+        {
+            byte[] packed = new byte[width * height * bytesPerPixel];
+            int i = 0;
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    var startIndex = GetPixelIndex(x, y);
+                    for (int b = 0; i < bytesPerPixel; b++)
+                    {
+                        packed[i++] = data[startIndex + b];
+                    }
+                }
+            }
+
+            return packed;
         }
         
         public Pixel GetPixel(int x, int y)
@@ -77,10 +97,8 @@
                 return palette.GetPixel(indexActual);
             }
 
-            var rowStartPixel = (rowOffset + (rowOffset * y)) + (bytesPerPixel * width * y);
-
-            var pixelStartIndex = rowStartPixel + (bytesPerPixel * x);
-
+            var pixelStartIndex = GetPixelIndex(x, y);
+            
             var first = data[pixelStartIndex];
 
             switch (bytesPerPixel)
