@@ -62,7 +62,7 @@
                 for (int x = 0; x < width; x++)
                 {
                     var startIndex = GetPixelIndex(x, y);
-                    for (int b = 0; i < bytesPerPixel; b++)
+                    for (int b = 0; b < bytesPerPixel; b++)
                     {
                         packed[i++] = data[startIndex + b];
                     }
